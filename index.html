@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GrowthBarber OS</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root {
+    color-scheme: dark;
+    --page-plane: #0d0d0d;
+    --surface-1: #1a1a19;
+    --surface-2: #201f1d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --muted: #898781;
+    --gridline: #2c2c2a;
+    --border: rgba(255,255,255,0.10);
+    --cat-1: #3987e5; /* blue */
+    --cat-2: #199e70; /* aqua */
+    --cat-3: #c98500; /* yellow */
+    --cat-4: #008300; /* green */
+    --cat-5: #9085e9; /* violet */
+    --cat-6: #e66767; /* red */
+    --cat-7: #d55181; /* magenta */
+    --cat-8: #d95926; /* orange */
+    --good: #0ca30c;
+    --warning: #fab219;
+    --serious: #ec835a;
+    --critical: #d03b3b;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--page-plane);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh;
+  }
+  body { overflow-x: hidden; }
+
+  /* ---------- Login ---------- */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .login-card h1 {
+    font-size: 20px;
+    margin: 0 0 4px;
+  }
+  .login-card p.sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin: 0 0 24px;
+  }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-size: 14px;
+  }
+  .field input:focus { outline: 2px solid var(--cat-1); outline-offset: 1px; }
+  button.primary {
+    width: 100%;
+    background: var(--cat-1);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  button.primary:disabled { opacity: 0.6; cursor: default; }
+  button.link {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 12px;
+    text-decoration: underline;
+  }
+  .error-msg {
+    color: var(--critical);
+    font-size: 12px;
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  /* ---------- Dashboard shell ---------- */
+  #dashboard { display: none; max-width: 1240px; margin: 0 auto; padding: 20px 24px 60px; }
+  header.topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 0 20px;
+    border-bottom: 1px solid var(--gridline);
+    margin-bottom: 20px;
+  }
+  header.topbar .brand { display: flex; align-items: center; gap: 10px; }
+  header.topbar .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cat-1); }
+  header.topbar h1 { font-size: 18px; margin: 0; }
+  header.topbar .meta { color: var(--muted); font-size: 12px; }
+  header.topbar .actions { display: flex; align-items: center; gap: 14px; }
+  header.topbar button.ghost {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer;
+  }
+  header.topbar button.ghost:hover { border-color: var(--text-secondary); }
+
+  /* Filters */
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .chip {
+    background: var(--surface-1); border: 1px solid var(--border);
+    color: var(--text-secondary); border-radius: 999px; padding: 6px 14px;
+    font-size: 12px; cursor: pointer; user-select: none;
+  }
+  .chip.active { border-color: var(--cat-1); color: #fff; background: rgba(57,135,229,0.15); }
+
+  /* Section titles */
+  h2.section-title {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--muted); margin: 32px 0 12px;
+  }
+
+  /* Stat tiles */
+  .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .tile .label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .tile .value { font-size: 22px; font-weight: 700; }
+  .tile .value.critical { color: var(--critical); }
+  .tile .value.good { color: var(--good); }
+
+  /* Card grid for charts */
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .card-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px;
+  }
+  .card h3 { font-size: 13px; margin: 0 0 4px; }
+  .card p.desc { font-size: 11px; color: var(--muted); margin: 0 0 14px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 11px; color: var(--text-secondary); }
+  .legend .item { display: flex; align-items: center; gap: 5px; }
+  .legend .swatch { width: 9px; height: 9px; border-radius: 2px; }
+
+  /* Tooltip */
+  .viz-tooltip {
+    position: fixed; pointer-events: none; z-index: 999;
+    background: #0d0d0d; border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 10px; font-size: 11px; color: var(--text-primary);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    display: none; white-space: nowrap;
+  }
+
+  /* Table */
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.data-table th {
+    text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.03em;
+    color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--gridline);
+    cursor: pointer; white-space: nowrap;
+  }
+  table.data-table th:hover { color: var(--text-secondary); }
+  table.data-table td {
+    padding: 9px 10px; border-bottom: 1px solid var(--gridline);
+    color: var(--text-secondary); white-space: nowrap;
+  }
+  table.data-table td.strong { color: var(--text-primary); font-weight: 600; }
+  table.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .table-wrap { overflow-x: auto; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 600; }
+  .badge.active { background: rgba(12,163,12,0.15); color: var(--good); }
+  .badge.past_due { background: rgba(250,178,25,0.15); color: var(--warning); }
+  .badge.cancelled { background: rgba(208,59,59,0.15); color: var(--critical); }
+  .search-box {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; color: var(--text-primary); font-size: 12.5px; margin-bottom: 12px; width: 240px;
+  }
+
+  .empty-state { color: var(--muted); font-size: 12px; padding: 20px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <h1>GrowthBarber OS</h1>
+    <p class="sub">Iniciá sesión con tu cuenta de administrador para ver las métricas.</p>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" value="tendencesolutions@gmail.com" autocomplete="username" />
+    </div>
+    <div class="field">
+      <label for="password">Contraseña</label>
+      <input id="password" type="password" autocomplete="current-password" />
+    </div>
+    <button class="primary" id="login-btn">Ingresar</button>
+    <div class="error-msg" id="login-error"></div>
+    <button class="link" id="forgot-btn">Olvidé mi contraseña</button>
+  </div>
+</div>
+
+<div id="dashboard">
+  <header class="topbar">
+    <div class="brand">
+      <div class="dot"></div>
+      <div>
+        <h1>GrowthBarber OS</h1>
+        <div class="meta" id="last-updated">Cargando...</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="ghost" id="refresh-btn">Actualizar</button>
+      <button class="ghost" id="logout-btn">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <div class="filter-row" id="filter-row"></div>
+
+  <h2 class="section-title">Salud del negocio</h2>
+  <div class="tiles" id="tiles"></div>
+
+  <h2 class="section-title">Distribución de clientes</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h3>Por plan</h3>
+      <p class="desc">Business vs. free, según el filtro activo</p>
+      <div id="chart-plan"></div>
+    </div>
+    <div class="card">
+      <h3>Por estado</h3>
+      <p class="desc">Activos, en mora y cancelados</p>
+      <div id="chart-estado"></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Facturación por moneda</h2>
+  <div class="card">
+    <h3>No se suman monedas distintas entre sí</h3>
+    <p class="desc">Cada barra es la facturación total en su propia moneda</p>
+    <div id="chart-moneda"></div>
+  </div>
+
+  <h2 class="section-title">Adopción de la plataforma vs. facturación</h2>
+  <div class="card">
+    <h3>SOPs completados vs. facturación total</h3>
+    <p class="desc">Cada punto es un cliente — sirve para ver si más uso de la app se traduce en más facturación</p>
+    <div id="chart-scatter"></div>
+  </div>
+
+  <h2 class="section-title">Clientes en riesgo</h2>
+  <div class="card">
+    <div class="table-wrap" id="watchlist"></div>
+  </div>
+
+  <h2 class="section-title">Todos los clientes</h2>
+  <div class="card">
+    <input class="search-box" id="search-box" placeholder="Buscar barbería..." />
+    <div class="table-wrap" id="clients-table"></div>
+  </div>
+</div>
+
+<div class="viz-tooltip" id="tooltip"></div>
+
+<script>
+const SUPABASE_URL = "https://llvetfalwwvmhmsghgmq.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdmV0ZmFsd3d2bWhtc2doZ21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2MTA0NTYsImV4cCI6MjA4NTE4NjQ1Nn0.CFI25HMVn0iZqtNusLrOeaYhAHgQmNXsx2njPiniPf4";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const CAT = ["--cat-1","--cat-2","--cat-3","--cat-4","--cat-5","--cat-6","--cat-7","--cat-8"];
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const money = (n, decimals=0) => (n ?? 0).toLocaleString('es-AR', {maximumFractionDigits: decimals});
+const tooltip = document.getElementById('tooltip');
+function showTip(evt, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (evt.clientX + 14) + 'px';
+  tooltip.style.top = (evt.clientY + 14) + 'px';
+}
+function hideTip() { tooltip.style.display = 'none'; }
+
+let ALL_CLIENTS = [];
+let GLOBAL = null;
+let BY_CURRENCY = [];
+let activeFilter = { plan: null, moneda: null };
+let sortState = { field: 'facturacion_total', dir: 'desc' };
+
+/* ---------------- Auth ---------------- */
+document.getElementById('login-btn').addEventListener('click', doLogin);
+document.getElementById('password').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  if (!password) { errEl.textContent = 'Ingresá tu contraseña.'; return; }
+  btn.disabled = true; btn.textContent = 'Ingresando...';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false; btn.textContent = 'Ingresar';
+  if (error) { errEl.textContent = 'No se pudo iniciar sesión: ' + error.message; return; }
+}
+
+document.getElementById('forgot-btn').addEventListener('click', async () => {
+  const email = document.getElementById('email').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!email) { errEl.textContent = 'Escribí tu email primero.'; return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email);
+  errEl.style.color = 'var(--good)';
+  errEl.textContent = error ? error.message : 'Te enviamos un email para restablecer la contraseña.';
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+});
+
+document.getElementById('refresh-btn').addEventListener('click', loadData);
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+});
+
+/* ---------------- Data loading ---------------- */
+async function loadData() {
+  const [{ data: clients, error: e1 }, { data: global, error: e2 }, { data: byCurrency, error: e3 }] = await Promise.all([
+    sb.from('dashboard_clientes').select('*'),
+    sb.from('dashboard_global').select('*'),
+    sb.from('dashboard_por_moneda').select('*'),
+  ]);
+  if (e1 || e2 || e3) {
+    document.getElementById('last-updated').textContent = 'Error al cargar datos: ' + (e1||e2||e3).message;
+    return;
+  }
+  ALL_CLIENTS = clients || [];
+  GLOBAL = (global && global[0]) || null;
+  BY_CURRENCY = byCurrency || [];
+  document.getElementById('last-updated').textContent = 'Datos en vivo · actualizado ' + new Date().toLocaleTimeString('es-AR');
+  renderFilters();
+  renderAll();
+}
+
+/* ---------------- Filters ---------------- */
+function renderFilters() {
+  const planes = [...new Set(ALL_CLIENTS.map(c => c.plan).filter(Boolean))];
+  const monedas = [...new Set(ALL_CLIENTS.map(c => c.moneda).filter(Boolean))].sort();
+  const row = document.getElementById('filter-row');
+  row.innerHTML = '';
+  const makeChip = (label, onClick, active) => {
+    const el = document.createElement('div');
+    el.className = 'chip' + (active ? ' active' : '');
+    el.textContent = label;
+    el.addEventListener('click', onClick);
+    return el;
+  };
+  row.appendChild(makeChip('Todos los planes', () => { activeFilter.plan = null; renderFilters(); renderAll(); }, activeFilter.plan === null));
+  planes.forEach(p => row.appendChild(makeChip(p, () => { activeFilter.plan = activeFilter.plan === p ? null : p; renderFilters(); renderAll(); }, activeFilter.plan === p)));
+  const sep = document.createElement('div');
+  sep.style.width = '1px'; sep.style.background = 'var(--gridline)'; sep.style.margin = '0 4px';
+  row.appendChild(sep);
+  row.appendChild(makeChip('Todas las monedas', () => { activeFilter.moneda = null; renderFilters(); renderAll(); }, activeFilter.moneda === null));
+  monedas.forEach(m => row.appendChild(makeChip(m, () => { activeFilter.moneda = activeFilter.moneda === m ? null : m; renderFilters(); renderAll(); }, activeFilter.moneda === m)));
+}
+
+function filteredClients() {
+  return ALL_CLIENTS.filter(c =>
+    (!activeFilter.plan || c.plan === activeFilter.plan) &&
+    (!activeFilter.moneda || c.moneda === activeFilter.moneda)
+  );
+}
+
+/* ---------------- Render everything ---------------- */
+function renderAll() {
+  renderTiles();
+  renderDonut('chart-plan', groupCount(filteredClients(), 'plan'), { business: cssVar('--cat-1'), free: cssVar('--cat-3') });
+  renderDonut('chart-estado', groupCount(filteredClients(), 'subscription_status'),
+    { active: cssVar('--good'), past_due: cssVar('--warning'), cancelled: cssVar('--critical') });
+  renderMonedaBar();
+  renderScatter();
+  renderWatchlist();
+  renderClientsTable();
+}
+
+function groupCount(arr, field) {
+  const out = {};
+  arr.forEach(r => { const k = r[field] || 'sin dato'; out[k] = (out[k]||0) + 1; });
+  return out;
+}
+
+function renderTiles() {
+  const g = GLOBAL || {};
+  const tiles = [
+    { label: 'MRR estimado', value: '$' + money(g.mrr_estimado_usd) },
+    { label: 'Clientes activos', value: money(g.clientes_activos) },
+    { label: 'En riesgo', value: money(g.clientes_en_riesgo), cls: g.clientes_en_riesgo > 0 ? 'critical' : 'good' },
+    { label: 'Churn rate', value: (g.churn_rate_pct ?? 0) + '%' },
+    { label: 'Sucursales prom.', value: money(g.sucursales_promedio, 2) },
+    { label: 'Barberos prom.', value: money(g.barberos_promedio, 2) },
+  ];
+  document.getElementById('tiles').innerHTML = tiles.map(t =>
+    `<div class="tile"><div class="label">${t.label}</div><div class="value ${t.cls||''}">${t.value}</div></div>`
+  ).join('');
+}
+
+/* Donut chart via SVG stroke-dasharray */
+function renderDonut(elId, counts, colorMap) {
+  const el = document.getElementById(elId);
+  const entries = Object.entries(counts);
+  const total = entries.reduce((s, [,v]) => s + v, 0);
+  if (!total) { el.innerHTML = '<div class="empty-state">Sin datos</div>'; return; }
+  const size = 160, r = 60, cx = size/2, cy = size/2, circ = 2 * Math.PI * r;
+  let offset = 0;
+  let arcs = '';
+  entries.forEach(([key, val], i) => {
+    const frac = val / total;
+    const len = frac * circ;
+    const color = colorMap[key] || cssVar(CAT[i % CAT.length]);
+    arcs += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="20"
+      stroke-dasharray="${len} ${circ - len}" stroke-dashoffset="${-offset}"
+      transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"
+      data-label="${key}" data-val="${val}" data-pct="${(frac*100).toFixed(1)}" class="donut-seg" style="cursor:pointer"/>`;
+    offset += len;
+  });
+  const legend = entries.map(([key, val], i) => {
+    const color = colorMap[key] || cssVar(CAT[i % CAT.length]);
+    return `<div class="item"><div class="swatch" style="background:${color}"></div>${key} (${val})</div>`;
+  }).join('');
+  el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+      ${arcs}
+      <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="${cssVar('--text-primary')}" font-size="20" font-weight="700">${total}</text>
+      <text x="${cx}" y="${cy+14}" text-anchor="middle" fill="${cssVar('--muted')}" font-size="10">clientes</text>
+    </svg>
+    <div class="legend">${legend}</div>`;
+  el.querySelectorAll('.donut-seg').forEach(seg => {
+    seg.addEventListener('mousemove', (e) => showTip(e, `<b>${seg.dataset.label}</b>: ${seg.dataset.val} (${seg.dataset.pct}%)`));
+    seg.addEventListener('mouseleave', hideTip);
+  });
+}
+
+/* Bar chart */
+function renderMonedaBar() {
+  const el = document.getElementById('chart-moneda');
+  const rows = [...BY_CURRENCY].sort((a,b) => b.facturacion_total - a.facturacion_total);
+  if (!rows.length) { el.innerHTML = '<div class="empty-state">Sin datos</div>'; return; }
+  const max = Math.max(...rows.map(r => r.facturacion_total));
+  const barH = 26, gap = 14, chartW = 640, labelW = 60, top = 10;
+  const h = rows.length * (barH+gap) + top;
+  let bars = '';
+  rows.forEach((r, i) => {
+    const y = top + i * (barH+gap);
+    const w = Math.max(4, (r.facturacion_total / max) * (chartW - labelW - 90));
+    const color = cssVar(CAT[i % CAT.length]);
+    bars += `<g>
+      <text x="0" y="${y+barH/2+4}" fill="${cssVar('--text-secondary')}" font-size="12" font-weight="600">${r.moneda}</text>
+      <rect x="${labelW}" y="${y}" width="${w}" height="${barH}" rx="4" fill="${color}"
+        class="bar-seg" style="cursor:pointer"
+        data-label="${r.moneda}" data-val="${money(r.facturacion_total,2)}" data-clientes="${r.clientes}" data-verif="${r.todos_verificados}"/>
+      <text x="${labelW + w + 8}" y="${y+barH/2+4}" fill="${cssVar('--text-primary')}" font-size="11">${money(r.facturacion_total)}</text>
+    </g>`;
+  });
+  el.innerHTML = `<svg width="100%" viewBox="0 0 ${chartW} ${h}" style="max-width:${chartW}px">${bars}</svg>`;
+  el.querySelectorAll('.bar-seg').forEach(seg => {
+    seg.addEventListener('mousemove', (e) => showTip(e,
+      `<b>${seg.dataset.label}</b>: ${seg.dataset.val}<br>${seg.dataset.clientes} clientes ${seg.dataset.verif === 'true' ? '✓ verificado' : '⚠ sin verificar'}`));
+    seg.addEventListener('mouseleave', hideTip);
+  });
+}
+
+/* Scatter chart: SOPs vs Facturación */
+function renderScatter() {
+  const el = document.getElementById('chart-scatter');
+  const pts = filteredClients().filter(c => c.facturacion_total > 0);
+  if (!pts.length) { el.innerHTML = '<div class="empty-state">Sin datos con facturación &gt; 0</div>'; return; }
+  const w = 700, h = 320, pad = 46;
+  const maxX = Math.max(...pts.map(p => p.sops_completados), 1);
+  const maxY = Math.max(...pts.map(p => p.facturacion_total), 1);
+  const sx = (v) => pad + (v / maxX) * (w - pad - 20);
+  const sy = (v) => h - pad - (v / maxY) * (h - pad - 20);
+  let dots = '';
+  pts.forEach(p => {
+    dots += `<circle cx="${sx(p.sops_completados)}" cy="${sy(p.facturacion_total)}" r="5" fill="${cssVar('--cat-1')}" fill-opacity="0.75"
+      stroke="${cssVar('--page-plane')}" stroke-width="1.5" class="dot-seg" style="cursor:pointer"
+      data-nombre="${(p.nombre_barberia||'Sin nombre').replace(/"/g,'')}" data-sops="${p.sops_completados}" data-fact="${money(p.facturacion_total,0)}" data-moneda="${p.moneda||''}"/>`;
+  });
+  el.innerHTML = `<svg width="100%" viewBox="0 0 ${w} ${h}" style="max-width:${w}px">
+    <line x1="${pad}" y1="${h-pad}" x2="${w-10}" y2="${h-pad}" stroke="${cssVar('--gridline')}" stroke-width="1"/>
+    <line x1="${pad}" y1="10" x2="${pad}" y2="${h-pad}" stroke="${cssVar('--gridline')}" stroke-width="1"/>
+    <text x="${(w)/2}" y="${h-6}" fill="${cssVar('--muted')}" font-size="11" text-anchor="middle">SOPs completados</text>
+    <text x="14" y="${h/2}" fill="${cssVar('--muted')}" font-size="11" text-anchor="middle" transform="rotate(-90 14 ${h/2})">Facturación total</text>
+    ${dots}
+  </svg>`;
+  el.querySelectorAll('.dot-seg').forEach(seg => {
+    seg.addEventListener('mousemove', (e) => showTip(e,
+      `<b>${seg.dataset.nombre}</b><br>SOPs: ${seg.dataset.sops} · Facturación: ${seg.dataset.fact} ${seg.dataset.moneda}`));
+    seg.addEventListener('mouseleave', hideTip);
+  });
+}
+
+/* Watchlist: at-risk clients */
+function renderWatchlist() {
+  const el = document.getElementById('watchlist');
+  const risky = filteredClients().filter(c => c.subscription_status !== 'active')
+    .sort((a,b) => (b.facturacion_total||0) - (a.facturacion_total||0));
+  if (!risky.length) { el.innerHTML = '<div class="empty-state">Ningún cliente en riesgo con este filtro 🎉</div>'; return; }
+  el.innerHTML = `<table class="data-table"><thead><tr>
+    <th>Barbería</th><th>Dueño</th><th>Plan</th><th>Estado</th><th>Facturación</th><th>Cliente desde</th>
+    </tr></thead><tbody>${risky.map(c => `<tr>
+      <td class="strong">${c.nombre_barberia || '—'}</td>
+      <td>${c.nombre_referencia || '—'}</td>
+      <td>${c.plan}</td>
+      <td><span class="badge ${c.subscription_status}">${c.subscription_status}</span></td>
+      <td>${money(c.facturacion_total,2)} ${c.moneda||''}</td>
+      <td>${c.client_since||'—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+/* Full clients table with search + sort */
+document.getElementById('search-box').addEventListener('input', renderClientsTable);
+document.getElementById('clients-table').addEventListener('click', (e) => {
+  const th = e.target.closest('th[data-field]');
+  if (!th) return;
+  const field = th.dataset.field;
+  sortState.dir = sortState.field === field && sortState.dir === 'desc' ? 'asc' : 'desc';
+  sortState.field = field;
+  renderClientsTable();
+});
+
+function renderClientsTable() {
+  const el = document.getElementById('clients-table');
+  const q = (document.getElementById('search-box').value || '').toLowerCase();
+  let rows = filteredClients().filter(c =>
+    !q || (c.nombre_barberia||'').toLowerCase().includes(q) || (c.nombre_referencia||'').toLowerCase().includes(q));
+  rows.sort((a,b) => {
+    const av = a[sortState.field] ?? 0, bv = b[sortState.field] ?? 0;
+    const cmp = typeof av === 'string' ? av.localeCompare(bv) : av - bv;
+    return sortState.dir === 'desc' ? -cmp : cmp;
+  });
+  const cols = [
+    { f: 'nombre_barberia', label: 'Barbería' },
+    { f: 'plan', label: 'Plan' },
+    { f: 'subscription_status', label: 'Estado' },
+    { f: 'sucursales', label: 'Sucursales' },
+    { f: 'barberos', label: 'Barberos' },
+    { f: 'moneda', label: 'Moneda' },
+    { f: 'facturacion_total', label: 'Facturación' },
+    { f: 'margen', label: 'Margen' },
+    { f: 'ticket_promedio', label: 'Ticket prom.' },
+    { f: 'clientes_finales', label: 'Clientes finales' },
+    { f: 'sops_completados', label: 'SOPs' },
+  ];
+  const header = cols.map(c => `<th data-field="${c.f}">${c.label}${sortState.field===c.f ? (sortState.dir==='desc'?' ↓':' ↑') : ''}</th>`).join('');
+  const body = rows.map(c => `<tr>
+    <td class="strong">${c.nombre_barberia || '—'}</td>
+    <td>${c.plan}</td>
+    <td><span class="badge ${c.subscription_status}">${c.subscription_status}</span></td>
+    <td>${c.sucursales}</td>
+    <td>${c.barberos}</td>
+    <td>${c.moneda || '—'}${c.moneda_verificada ? '' : ' ⚠'}</td>
+    <td>${money(c.facturacion_total,2)}</td>
+    <td>${money(c.margen,2)}</td>
+    <td>${money(c.ticket_promedio,2)}</td>
+    <td>${money(c.clientes_finales)}</td>
+    <td>${money(c.sops_completados)}</td>
+  </tr>`).join('');
+  el.innerHTML = rows.length
+    ? `<table class="data-table"><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`
+    : '<div class="empty-state">Sin resultados</div>';
+}
+</script>
+</body>
+</html>
