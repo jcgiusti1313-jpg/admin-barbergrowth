@@ -55,72 +55,34 @@
     border-radius: 16px;
     padding: 32px;
   }
-  .login-card h1 {
-    font-size: 20px;
-    margin: 0 0 4px;
-  }
-  .login-card p.sub {
-    color: var(--text-secondary);
-    font-size: 13px;
-    margin: 0 0 24px;
-  }
+  .login-card h1 { font-size: 20px; margin: 0 0 4px; }
+  .login-card p.sub { color: var(--text-secondary); font-size: 13px; margin: 0 0 24px; }
   .field { margin-bottom: 14px; }
-  .field label {
-    display: block;
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-  }
+  .field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
   .field input {
-    width: 100%;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: var(--text-primary);
-    font-size: 14px;
+    width: 100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; color: var(--text-primary); font-size: 14px;
   }
   .field input:focus { outline: 2px solid var(--cat-1); outline-offset: 1px; }
   button.primary {
-    width: 100%;
-    background: var(--cat-1);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 11px 12px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 6px;
+    width: 100%; background: var(--cat-1); color: #fff; border: none; border-radius: 8px;
+    padding: 11px 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 6px;
   }
   button.primary:disabled { opacity: 0.6; cursor: default; }
   button.link {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 12px;
-    cursor: pointer;
-    padding: 0;
-    margin-top: 12px;
-    text-decoration: underline;
+    background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer;
+    padding: 0; margin-top: 12px; text-decoration: underline;
   }
-  .error-msg {
-    color: var(--critical);
-    font-size: 12px;
-    margin-top: 10px;
-    min-height: 16px;
-  }
+  .error-msg { color: var(--critical); font-size: 12px; margin-top: 10px; min-height: 16px; }
 
   /* ---------- Dashboard shell ---------- */
   #dashboard { display: none; max-width: 1240px; margin: 0 auto; padding: 20px 24px 60px; }
   header.topbar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 4px 0 20px;
-    border-bottom: 1px solid var(--gridline);
-    margin-bottom: 20px;
+    padding: 4px 0 20px; border-bottom: 1px solid var(--gridline); margin-bottom: 20px;
   }
   header.topbar .brand { display: flex; align-items: center; gap: 10px; }
-  header.topbar .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cat-1); }
+  header.topbar .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cat-1); box-shadow: 0 0 8px var(--cat-1); }
   header.topbar h1 { font-size: 18px; margin: 0; }
   header.topbar .meta { color: var(--muted); font-size: 12px; }
   header.topbar .actions { display: flex; align-items: center; gap: 14px; }
@@ -149,35 +111,36 @@
   .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
   @media (max-width: 900px) { .tiles { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 560px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
-  .tile {
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
-    padding: 14px 16px;
-  }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
   .tile .label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
   .tile .value { font-size: 22px; font-weight: 700; }
   .tile .value.critical { color: var(--critical); }
   .tile .value.good { color: var(--good); }
 
-  /* Card grid for charts */
+  /* Card grid */
   .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 900px) { .card-grid { grid-template-columns: 1fr; } }
-  .card {
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
-    padding: 18px;
-  }
+  .card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 900px) { .card-grid, .card-grid.cols-4, .card-grid.cols-3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .card-grid, .card-grid.cols-4, .card-grid.cols-3 { grid-template-columns: 1fr; } }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
   .card h3 { font-size: 13px; margin: 0 0 4px; }
   .card p.desc { font-size: 11px; color: var(--muted); margin: 0 0 14px; }
   .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 11px; color: var(--text-secondary); }
   .legend .item { display: flex; align-items: center; gap: 5px; }
   .legend .swatch { width: 9px; height: 9px; border-radius: 2px; }
 
+  /* Gauges */
+  .gauge-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .gauge-label { font-size: 12px; color: var(--text-secondary); text-align: center; }
+  .gauge-sub { font-size: 10.5px; color: var(--muted); text-align: center; }
+
   /* Tooltip */
   .viz-tooltip {
     position: fixed; pointer-events: none; z-index: 999;
     background: #0d0d0d; border: 1px solid var(--border); border-radius: 6px;
     padding: 6px 10px; font-size: 11px; color: var(--text-primary);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    display: none; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4); display: none; white-space: nowrap;
   }
 
   /* Table */
@@ -188,12 +151,10 @@
     cursor: pointer; white-space: nowrap;
   }
   table.data-table th:hover { color: var(--text-secondary); }
-  table.data-table td {
-    padding: 9px 10px; border-bottom: 1px solid var(--gridline);
-    color: var(--text-secondary); white-space: nowrap;
-  }
+  table.data-table td { padding: 9px 10px; border-bottom: 1px solid var(--gridline); color: var(--text-secondary); white-space: nowrap; }
   table.data-table td.strong { color: var(--text-primary); font-weight: 600; }
-  table.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  table.data-table tr { cursor: pointer; }
+  table.data-table tr:hover td { background: rgba(255,255,255,0.03); }
   .table-wrap { overflow-x: auto; }
   .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 600; }
   .badge.active { background: rgba(12,163,12,0.15); color: var(--good); }
@@ -203,8 +164,29 @@
     background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
     padding: 8px 12px; color: var(--text-primary); font-size: 12.5px; margin-bottom: 12px; width: 240px;
   }
-
   .empty-state { color: var(--muted); font-size: 12px; padding: 20px; text-align: center; }
+
+  /* Client detail modal */
+  #detail-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100;
+    align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
+  }
+  #detail-panel {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    max-width: 720px; width: 100%; padding: 26px; position: relative;
+  }
+  #detail-panel .close-btn {
+    position: absolute; top: 18px; right: 18px; background: none; border: none;
+    color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1;
+  }
+  #detail-panel h2 { margin: 0 0 2px; font-size: 20px; }
+  #detail-panel .sub { color: var(--muted); font-size: 12.5px; margin-bottom: 20px; }
+  .detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 640px) { .detail-grid { grid-template-columns: 1fr 1fr; } }
+  .detail-tile { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .detail-tile .l { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .detail-tile .v { font-size: 15px; font-weight: 700; }
+  .detail-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin: 18px 0 8px; }
 </style>
 </head>
 <body>
@@ -247,6 +229,9 @@
   <h2 class="section-title">Salud del negocio</h2>
   <div class="tiles" id="tiles"></div>
 
+  <h2 class="section-title">Indicadores clave</h2>
+  <div class="card-grid cols-4" id="gauges"></div>
+
   <h2 class="section-title">Distribución de clientes</h2>
   <div class="card-grid">
     <div class="card">
@@ -268,6 +253,16 @@
     <div id="chart-moneda"></div>
   </div>
 
+  <h2 class="section-title">Tendencias mensuales</h2>
+  <div class="card-grid" id="tendencias"></div>
+
+  <h2 class="section-title">Turnos por día de la semana</h2>
+  <div class="card">
+    <h3>Promedio de turnos completados por día (no la suma total)</h3>
+    <p class="desc">Normalizado por cuántas veces ocurrió cada día en el período — para no confundir "pocos turnos" con "pocas fechas registradas"</p>
+    <div id="chart-dias"></div>
+  </div>
+
   <h2 class="section-title">Adopción de la plataforma vs. facturación</h2>
   <div class="card">
     <h3>SOPs completados vs. facturación total</h3>
@@ -281,6 +276,7 @@
   </div>
 
   <h2 class="section-title">Todos los clientes</h2>
+  <p style="color:var(--muted);font-size:11.5px;margin:-4px 0 10px;">Hacé clic en una fila para ver el detalle completo de esa barbería</p>
   <div class="card">
     <input class="search-box" id="search-box" placeholder="Buscar barbería..." />
     <div class="table-wrap" id="clients-table"></div>
@@ -288,6 +284,10 @@
 </div>
 
 <div class="viz-tooltip" id="tooltip"></div>
+
+<div id="detail-overlay">
+  <div id="detail-panel"></div>
+</div>
 
 <script>
 const SUPABASE_URL = "https://llvetfalwwvmhmsghgmq.supabase.co";
@@ -309,6 +309,9 @@ function hideTip() { tooltip.style.display = 'none'; }
 let ALL_CLIENTS = [];
 let GLOBAL = null;
 let BY_CURRENCY = [];
+let GAUGES = [];
+let TENDENCIA = [];
+let DIAS = [];
 let activeFilter = { plan: null, moneda: null };
 let sortState = { field: 'facturacion_total', dir: 'desc' };
 
@@ -338,10 +341,7 @@ document.getElementById('forgot-btn').addEventListener('click', async () => {
   errEl.textContent = error ? error.message : 'Te enviamos un email para restablecer la contraseña.';
 });
 
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  await sb.auth.signOut();
-});
-
+document.getElementById('logout-btn').addEventListener('click', async () => { await sb.auth.signOut(); });
 document.getElementById('refresh-btn').addEventListener('click', loadData);
 
 sb.auth.onAuthStateChange((event, session) => {
@@ -357,18 +357,25 @@ sb.auth.onAuthStateChange((event, session) => {
 
 /* ---------------- Data loading ---------------- */
 async function loadData() {
-  const [{ data: clients, error: e1 }, { data: global, error: e2 }, { data: byCurrency, error: e3 }] = await Promise.all([
+  const [
+    { data: clients, error: e1 }, { data: global, error: e2 }, { data: byCurrency, error: e3 },
+    { data: gauges, error: e4 }, { data: tendencia, error: e5 }, { data: dias, error: e6 },
+  ] = await Promise.all([
     sb.from('dashboard_clientes').select('*'),
     sb.from('dashboard_global').select('*'),
     sb.from('dashboard_por_moneda').select('*'),
+    sb.from('dashboard_gauges').select('*'),
+    sb.from('dashboard_tendencia').select('*'),
+    sb.from('dashboard_dias_semana').select('*'),
   ]);
-  if (e1 || e2 || e3) {
-    document.getElementById('last-updated').textContent = 'Error al cargar datos: ' + (e1||e2||e3).message;
-    return;
-  }
+  const err = e1 || e2 || e3 || e4 || e5 || e6;
+  if (err) { document.getElementById('last-updated').textContent = 'Error al cargar datos: ' + err.message; return; }
   ALL_CLIENTS = clients || [];
   GLOBAL = (global && global[0]) || null;
   BY_CURRENCY = byCurrency || [];
+  GAUGES = gauges || [];
+  TENDENCIA = (tendencia || []).slice().sort((a,b) => new Date(a.mes_fecha) - new Date(b.mes_fecha));
+  DIAS = dias || [];
   document.getElementById('last-updated').textContent = 'Datos en vivo · actualizado ' + new Date().toLocaleTimeString('es-AR');
   renderFilters();
   renderAll();
@@ -406,10 +413,13 @@ function filteredClients() {
 /* ---------------- Render everything ---------------- */
 function renderAll() {
   renderTiles();
+  renderGauges();
   renderDonut('chart-plan', groupCount(filteredClients(), 'plan'), { business: cssVar('--cat-1'), free: cssVar('--cat-3') });
   renderDonut('chart-estado', groupCount(filteredClients(), 'subscription_status'),
     { active: cssVar('--good'), past_due: cssVar('--warning'), cancelled: cssVar('--critical') });
   renderMonedaBar();
+  renderTendencias();
+  renderDiasChart();
   renderScatter();
   renderWatchlist();
   renderClientsTable();
@@ -434,6 +444,39 @@ function renderTiles() {
   document.getElementById('tiles').innerHTML = tiles.map(t =>
     `<div class="tile"><div class="label">${t.label}</div><div class="value ${t.cls||''}">${t.value}</div></div>`
   ).join('');
+}
+
+/* ---- Gauges: proper circular gauge, rounded cap, glow ---- */
+function renderGauges() {
+  const el = document.getElementById('gauges');
+  const metrics = [...new Set(GAUGES.map(g => g.metrica))];
+  const colorFor = (m) => ({
+    'Churn': cssVar('--critical'),
+    'Plan Pago': cssVar('--cat-1'),
+    'Adopción SOPs': cssVar('--cat-5'),
+    'Moneda Verificada': cssVar('--cat-2'),
+  }[m] || cssVar('--cat-1'));
+  el.innerHTML = metrics.map(m => {
+    const rows = GAUGES.filter(g => g.metrica === m).sort((a,b) => a.orden - b.orden);
+    const filled = rows[0]?.valor ?? 0;
+    const color = colorFor(m);
+    const size = 140, r = 52, cx = size/2, cy = size/2, circ = 2*Math.PI*r;
+    const len = (filled/100) * circ;
+    return `<div class="card">
+      <div class="gauge-wrap">
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${cssVar('--gridline')}" stroke-width="14"/>
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="14"
+            stroke-dasharray="${len} ${circ-len}" stroke-linecap="round"
+            transform="rotate(-90 ${cx} ${cy})" style="filter:drop-shadow(0 0 6px ${color}80)"/>
+          <text x="${cx}" y="${cy-2}" text-anchor="middle" fill="${cssVar('--text-primary')}" font-size="24" font-weight="700">${filled}</text>
+          <text x="${cx}" y="${cy+16}" text-anchor="middle" fill="${cssVar('--muted')}" font-size="10">/ 100</text>
+        </svg>
+        <div class="gauge-label">${m}</div>
+        <div class="gauge-sub">${rows[0]?.segmento || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 /* Donut chart via SVG stroke-dasharray */
@@ -500,6 +543,85 @@ function renderMonedaBar() {
   });
 }
 
+/* ---- Tendencias: gradient area/line charts ---- */
+function renderTendencias() {
+  const el = document.getElementById('tendencias');
+  if (!TENDENCIA.length) { el.innerHTML = '<div class="card empty-state">Sin datos históricos todavía</div>'; return; }
+  const series = [
+    { field: 'clientes_acumulados', label: 'Clientes acumulados', color: cssVar('--cat-1'), suffix: '' },
+    { field: 'facturacion_ars', label: 'Facturación ARS / mes', color: cssVar('--cat-2'), suffix: '' },
+    { field: 'facturacion_cop', label: 'Facturación COP / mes', color: cssVar('--cat-3'), suffix: '' },
+    { field: 'turnos_completados', label: 'Turnos completados / mes', color: cssVar('--cat-5'), suffix: '' },
+    { field: 'visitas_pagina', label: 'Visitas a página de reserva / mes', color: cssVar('--cat-7'), suffix: '' },
+    { field: 'tasa_aceptacion_pct', label: 'Tasa de aceptación de upsells / mes', color: cssVar('--cat-8'), suffix: '%' },
+  ];
+  el.innerHTML = series.map(s => `<div class="card">
+      <h3>${s.label}</h3>
+      <div id="area-${s.field}"></div>
+    </div>`).join('');
+  series.forEach(s => renderAreaChart('area-' + s.field, s));
+}
+
+function renderAreaChart(elId, s) {
+  const el = document.getElementById(elId);
+  const pts = TENDENCIA.map(t => ({ x: t.mes, y: t[s.field] ?? 0 }));
+  const w = 280, h = 130, padL = 6, padR = 6, padT = 10, padB = 22;
+  const maxY = Math.max(...pts.map(p => p.y), 1);
+  const stepX = (w - padL - padR) / Math.max(1, pts.length - 1);
+  const sx = (i) => padL + i * stepX;
+  const sy = (v) => h - padB - (v / maxY) * (h - padT - padB);
+  const linePoints = pts.map((p, i) => `${sx(i)},${sy(p.y)}`).join(' ');
+  const areaPoints = `${padL},${h-padB} ${linePoints} ${sx(pts.length-1)},${h-padB}`;
+  const gradId = 'grad-' + elId;
+  const dots = pts.map((p, i) => `<circle cx="${sx(i)}" cy="${sy(p.y)}" r="3" fill="${s.color}"
+    class="area-dot" style="cursor:pointer" data-label="${p.x}" data-val="${money(p.y,1)}${s.suffix}"/>`).join('');
+  el.innerHTML = `<svg width="100%" viewBox="0 0 ${w} ${h}">
+    <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${s.color}" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="${s.color}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <polygon points="${areaPoints}" fill="url(#${gradId})"/>
+    <polyline points="${linePoints}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}
+    <text x="${padL}" y="${h-6}" fill="${cssVar('--muted')}" font-size="9">${pts[0]?.x || ''}</text>
+    <text x="${w-padR}" y="${h-6}" fill="${cssVar('--muted')}" font-size="9" text-anchor="end">${pts[pts.length-1]?.x || ''}</text>
+  </svg>`;
+  el.querySelectorAll('.area-dot').forEach(dot => {
+    dot.addEventListener('mousemove', (e) => showTip(e, `<b>${dot.dataset.label}</b>: ${dot.dataset.val}`));
+    dot.addEventListener('mouseleave', hideTip);
+  });
+}
+
+/* ---- Día de la semana bar chart ---- */
+function renderDiasChart() {
+  const el = document.getElementById('chart-dias');
+  if (!DIAS.length) { el.innerHTML = '<div class="empty-state">Sin datos</div>'; return; }
+  const orderEs = { Monday: 'Lunes', Tuesday: 'Martes', Wednesday: 'Miércoles', Thursday: 'Jueves', Friday: 'Viernes', Saturday: 'Sábado', Sunday: 'Domingo' };
+  const rows = [...DIAS].sort((a,b) => a.dia_num - b.dia_num);
+  const max = Math.max(...rows.map(r => r.turnos_promedio_dia || 0), 1);
+  const barW = 70, gap = 18, chartH = 180, top = 10, labelH = 34;
+  const w = rows.length * (barW+gap);
+  let bars = '';
+  rows.forEach((r, i) => {
+    const x = i * (barW+gap);
+    const val = r.turnos_promedio_dia || 0;
+    const bh = Math.max(4, (val / max) * (chartH - top - 10));
+    const isMax = val === max;
+    const color = isMax ? cssVar('--good') : cssVar('--cat-1');
+    bars += `<g>
+      <rect x="${x}" y="${chartH - bh}" width="${barW}" height="${bh}" rx="6" fill="${color}"
+        class="dia-seg" style="cursor:pointer" data-label="${orderEs[r.dia_semana]||r.dia_semana}" data-val="${val}" data-fechas="${r.fechas_distintas}"/>
+      <text x="${x + barW/2}" y="${chartH - bh - 8}" text-anchor="middle" fill="${cssVar('--text-primary')}" font-size="13" font-weight="700">${val}</text>
+      <text x="${x + barW/2}" y="${chartH + 18}" text-anchor="middle" fill="${cssVar('--text-secondary')}" font-size="11">${(orderEs[r.dia_semana]||r.dia_semana).slice(0,3)}</text>
+    </g>`;
+  });
+  el.innerHTML = `<svg width="100%" viewBox="0 0 ${w} ${chartH+labelH}" style="max-width:${w}px">${bars}</svg>`;
+  el.querySelectorAll('.dia-seg').forEach(seg => {
+    seg.addEventListener('mousemove', (e) => showTip(e, `<b>${seg.dataset.label}</b>: ${seg.dataset.val} turnos/día en promedio<br>(${seg.dataset.fechas} fechas con datos)`));
+    seg.addEventListener('mouseleave', hideTip);
+  });
+}
+
 /* Scatter chart: SOPs vs Facturación */
 function renderScatter() {
   const el = document.getElementById('chart-scatter');
@@ -538,7 +660,7 @@ function renderWatchlist() {
   if (!risky.length) { el.innerHTML = '<div class="empty-state">Ningún cliente en riesgo con este filtro 🎉</div>'; return; }
   el.innerHTML = `<table class="data-table"><thead><tr>
     <th>Barbería</th><th>Dueño</th><th>Plan</th><th>Estado</th><th>Facturación</th><th>Cliente desde</th>
-    </tr></thead><tbody>${risky.map(c => `<tr>
+    </tr></thead><tbody>${risky.map(c => `<tr data-id="${c.client_id}">
       <td class="strong">${c.nombre_barberia || '—'}</td>
       <td>${c.nombre_referencia || '—'}</td>
       <td>${c.plan}</td>
@@ -546,17 +668,22 @@ function renderWatchlist() {
       <td>${money(c.facturacion_total,2)} ${c.moneda||''}</td>
       <td>${c.client_since||'—'}</td>
     </tr>`).join('')}</tbody></table>`;
+  el.querySelectorAll('tr[data-id]').forEach(tr => tr.addEventListener('click', () => openDetail(tr.dataset.id)));
 }
 
 /* Full clients table with search + sort */
 document.getElementById('search-box').addEventListener('input', renderClientsTable);
 document.getElementById('clients-table').addEventListener('click', (e) => {
   const th = e.target.closest('th[data-field]');
-  if (!th) return;
-  const field = th.dataset.field;
-  sortState.dir = sortState.field === field && sortState.dir === 'desc' ? 'asc' : 'desc';
-  sortState.field = field;
-  renderClientsTable();
+  if (th) {
+    const field = th.dataset.field;
+    sortState.dir = sortState.field === field && sortState.dir === 'desc' ? 'asc' : 'desc';
+    sortState.field = field;
+    renderClientsTable();
+    return;
+  }
+  const tr = e.target.closest('tr[data-id]');
+  if (tr) openDetail(tr.dataset.id);
 });
 
 function renderClientsTable() {
@@ -580,10 +707,11 @@ function renderClientsTable() {
     { f: 'margen', label: 'Margen' },
     { f: 'ticket_promedio', label: 'Ticket prom.' },
     { f: 'clientes_finales', label: 'Clientes finales' },
-    { f: 'sops_completados', label: 'SOPs' },
+    { f: 'turnos_promedio_mes', label: 'Turnos/mes' },
+    { f: 'crecimiento_incremental', label: 'Crecimiento' },
   ];
   const header = cols.map(c => `<th data-field="${c.f}">${c.label}${sortState.field===c.f ? (sortState.dir==='desc'?' ↓':' ↑') : ''}</th>`).join('');
-  const body = rows.map(c => `<tr>
+  const body = rows.map(c => `<tr data-id="${c.client_id}">
     <td class="strong">${c.nombre_barberia || '—'}</td>
     <td>${c.plan}</td>
     <td><span class="badge ${c.subscription_status}">${c.subscription_status}</span></td>
@@ -594,11 +722,73 @@ function renderClientsTable() {
     <td>${money(c.margen,2)}</td>
     <td>${money(c.ticket_promedio,2)}</td>
     <td>${money(c.clientes_finales)}</td>
-    <td>${money(c.sops_completados)}</td>
+    <td>${money(c.turnos_promedio_mes,1)}</td>
+    <td>${money(c.crecimiento_incremental,2)}</td>
   </tr>`).join('');
   el.innerHTML = rows.length
     ? `<table class="data-table"><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`
     : '<div class="empty-state">Sin resultados</div>';
+  el.querySelectorAll('tr[data-id]').forEach(tr => tr.addEventListener('click', () => openDetail(tr.dataset.id)));
+}
+
+/* ---- Client detail modal ---- */
+const overlay = document.getElementById('detail-overlay');
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeDetail(); });
+function closeDetail() { overlay.style.display = 'none'; }
+
+function openDetail(clientId) {
+  const c = ALL_CLIENTS.find(x => x.client_id === clientId);
+  if (!c) return;
+  const panel = document.getElementById('detail-panel');
+  const tile = (label, value) => `<div class="detail-tile"><div class="l">${label}</div><div class="v">${value}</div></div>`;
+  panel.innerHTML = `
+    <button class="close-btn" id="detail-close">×</button>
+    <h2>${c.nombre_barberia || 'Sin nombre'}</h2>
+    <div class="sub">${c.nombre_referencia || 'Dueño sin registrar'} · ${c.email_referencia || 'sin email'} · Cliente desde ${c.client_since || '—'}</div>
+
+    <div class="detail-section-title">General</div>
+    <div class="detail-grid">
+      ${tile('Plan', c.plan)}
+      ${tile('Estado', c.subscription_status)}
+      ${tile('Meses activo', c.months_active ?? '—')}
+      ${tile('Sucursales', c.sucursales)}
+      ${tile('Barberos', c.barberos)}
+      ${tile('Moneda', (c.moneda||'—') + (c.moneda_verificada ? ' ✓' : ' ⚠ sin verificar'))}
+    </div>
+
+    <div class="detail-section-title">Facturación</div>
+    <div class="detail-grid">
+      ${tile('Facturación total', money(c.facturacion_total,2))}
+      ${tile('Gastos total', money(c.gastos_total,2))}
+      ${tile('Margen', money(c.margen,2))}
+      ${tile('Ticket promedio', money(c.ticket_promedio,2))}
+      ${tile('Facturación primer mes', money(c.revenue_primer_mes,2))}
+      ${tile('Facturación último mes', money(c.revenue_ultimo_mes,2))}
+      ${tile('Crecimiento incremental', money(c.crecimiento_incremental,2))}
+    </div>
+
+    <div class="detail-section-title">Operación</div>
+    <div class="detail-grid">
+      ${tile('Turnos completados (total)', money(c.turnos_completados_total))}
+      ${tile('Turnos / mes promedio', money(c.turnos_promedio_mes,1))}
+      ${tile('Clientes CBM registrados', money(c.clientes_finales))}
+      ${tile('Tasa productos vendidos/día', money(c.tasa_productos_vendidos_promedio,2))}
+      ${tile('Tasa upsells/día', money(c.tasa_upsells_diaria_promedio,2))}
+      ${tile('Tasa MVP/día', money(c.tasa_mvp_promedio,2))}
+    </div>
+
+    <div class="detail-section-title">Adopción y marketing</div>
+    <div class="detail-grid">
+      ${tile('SOPs completados', money(c.sops_completados))}
+      ${tile('Visitas página (total)', money(c.visitas_pagina_total))}
+      ${tile('Visitas página / mes', money(c.visitas_pagina_promedio_mes,1))}
+      ${tile('Upsells ofrecidos / mes', money(c.upsells_ofrecidos_promedio_mes,1))}
+      ${tile('Tasa aceptación upsell', (c.tasa_upsell_aceptado_pct ?? '—') + (c.tasa_upsell_aceptado_pct != null ? '%' : ''))}
+      ${tile('Días con reporte diario', money(c.dias_con_reporte))}
+    </div>
+  `;
+  document.getElementById('detail-close').addEventListener('click', closeDetail);
+  overlay.style.display = 'flex';
 }
 </script>
 </body>
